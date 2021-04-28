@@ -1,0 +1,9 @@
+pattern_in                                   | hours_copy | hours_delete |
+#--------------------------------------------+------------+---------------
+tropomi/lev_2/*/*/*/*/*.nc                   | 999999     | 96           |
+tropomi/lev_2_orbit/*/*/*/*/*.nc             | 999999     | 120          |
+tropomi/lev_3/*/*/*/*/*/*/*.nc               | 999999     | 120          |
+tropomi/stats/*/best_qa_value/*/*/*/*/*/*.nc | 3          | 18           |
+tropomi/stats/*/mean/*/*/*/*/*/*.nc          | 1          | 48           |
+cfs/lev_2/*/*/*/cfs_*.nc                     | 1          | 120          |
+cfs/lev_2/201?/*/*/cfs_*.nc                  | 1          | 2            |

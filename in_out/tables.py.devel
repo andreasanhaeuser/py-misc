@@ -1,0 +1,22 @@
+def get_separator(sep, filename):
+    """Try various ways to get separator."""
+    # trivial: separator explicitly given
+    if sep is not None:
+        return sep
+
+    # try to use a filename.sep
+    # ====================================================
+    filename_sep = filename + '.sep'
+    if os.path.isfile(filename_sep):
+        with open(filename_sep, 'r') as fid:
+            text = fid.read().strip('\n')
+
+        if any(text):
+            return text
+    # ====================================================
+
+    # TODO: Search filename for a character that appears the same number of
+    # times in each non-comment line
+    # ====================================================
+
+    return _sep

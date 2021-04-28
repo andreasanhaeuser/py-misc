@@ -1,0 +1,7 @@
+pathbase_in : /data
+pathbase_out : ~/gp/data
+filename_jobs : file_transfer.tab
+filename_copy_record : file_transfer.rec
+
+timeout_filelock : 3600     # seconds
+

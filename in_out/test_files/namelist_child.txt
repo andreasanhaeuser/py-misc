@@ -1,0 +1,6 @@
+load_files : namelist_parent_1.txt, namelist_parent_2.txt
+parameter_g : 4, 3
+parameter_h : a string
+parameter_i : two, strings
+parameter_j : 1000
+

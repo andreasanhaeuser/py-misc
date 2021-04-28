@@ -1,0 +1,5 @@
+load_file : namelist_grand_parent.txt
+parameter_a : default_by_parent_1_a
+parameter_b : default_by_parent_1, b
+parameter_c : default_by_parent_1_c
+parameter_d : default_by_parent_1_d

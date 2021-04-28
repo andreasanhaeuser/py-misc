@@ -1,0 +1,5 @@
+# A test dictionary from German to English
+
+Bank : bench | bank
+Brot : bread
+wieso, weshalb, warum : why, why, why | Why
