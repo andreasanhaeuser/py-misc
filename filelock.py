@@ -134,7 +134,7 @@ class FileLock(object):
         if not self.created_lock:
             raise FileLockException(
                     'Trying to remove a lock that was created'
-                    + ' by another instance:' % self.lockfile
+                    + ' by another instance: %s' % self.lockfile
                     )
 
         if os.path.isfile(self.lockfile):
