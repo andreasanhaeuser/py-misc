@@ -918,15 +918,23 @@ def str_to_datetime(s, fmt=None):
     if fmt is not None:
         pass
     elif len(s) == 8:
+        # yyyymmdd
         fmt = '%Y%m%d'
     elif len(s) == 10 and s[4] in ' -_':
+        # yyyy?mm?dd
         gap = s[4]
         fmt = '%Y' + gap + '%m' + gap + '%d'
+    elif len(s) == 11 and s[8] == '_':
+        # yyyymmdd_HH
+        fmt = '%Y%m%d_%H'
     elif len(s) == 14:
+        # yyyymmddHHMMSS
         fmt = '%Y%m%d%H%M%S'
     elif len(s) == 15 and s[8] == '_':
+        # yyyymmdd_HHMMSS
         fmt = '%Y%m%d_%H%M%S'
     elif len(s) == 19:
+        # yyyy?mm?dd?HH?MM?SS
         fmt = (''
                 + '%Y' + s[4]
                 + '%m' + s[7]
