@@ -944,7 +944,12 @@ def str_to_datetime(s, fmt=None):
                 + '%S'
                 )
     else:
-        raise ValueError('Unknown string format: %s' % s)
+        message = (
+                "I don't know how to convert this to a datetime: '%s'" % s
+                + "\nYou can teach me how to by editing the file that"
+                + " raises this error."
+                )
+        raise ValueError(message)
 
     return dt.datetime.strptime(s, fmt)
 
