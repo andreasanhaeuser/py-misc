@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+from . import factorize
 from . import functions
 from . import largest_remainder
 from . import linreg
