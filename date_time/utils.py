@@ -699,7 +699,6 @@ def sod_doy(time):
     return sec_of_day, day_of_year, year
 
 
-
 ################################################################
 # ROUNDING                                                     #
 ################################################################
@@ -976,7 +975,10 @@ def str_to_date(s, fmt=None):
 
 def str_to_timedelta(words, enhanced=False):
     if isinstance(words, str):
-        words = words.strip().replace('_', ' ').split()
+        separators = ('_', '-')
+        for separator in separators:
+            words = words.replace(separator, ' ')
+        words = words.strip().split()
 
     if len(words) == 1:
         number = words[0]
