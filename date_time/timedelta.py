@@ -357,6 +357,7 @@ class EnhancedTimeDelta(object):
                     minutes=minutes, hours=hours, weeks=weeks,
                     )
 
+
 ###################################################
 # ITERATION                                       #
 ###################################################

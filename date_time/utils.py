@@ -111,9 +111,9 @@ def datetime_range(
 
         History
         -------
-        2014       (AA): Created
-        2017-12-30 (AA): Extention for inc < 0. Raise error on inc == 0.
         2020-02-28 (AA): Set default for `inc` (1 day)
+        2017-12-30 (AA): Extention for inc < 0. Raise error on inc == 0.
+        2014       (AA): Created
     """
     ###################################################
     # DEFAULT                                         #
@@ -884,13 +884,13 @@ def str_to_datetime(s, fmt=None):
 
         Parameters
         ----------
-        s : str
+        s : str or iterable of such
         fmt : str or None
             The formatter
 
         Returns
         -------
-        datetime.datetime
+        datetime.datetime or list of such
     """
     if s is None:
         return dt.datetime.now()
@@ -962,14 +962,23 @@ def str_to_date(s, fmt=None):
 
         Parameters
         ----------
-        s : str
+        s : str or iterable of such
         fmt : str or None
             The formatter
 
         Returns
         -------
-        datetime.date
+        datetime.date or list of such
     """
+    # check input
+    if not isinstance(s, Iterable):
+        message = 'Input must be str or iterable of such, got %s' % type(s)
+        raise TypeError(message)
+
+    # Iterable
+    if not isinstance(s, str):
+        return [str_to_date(ss, fmt) for ss in s]
+
     datetime = str_to_datetime(s, fmt)
     return datetime.date()
 

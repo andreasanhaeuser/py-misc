@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """Implentations of time intervals, daytime periods and a seosons."""
 
+# standard modules
 import datetime as dt
 from collections import Iterable
 
@@ -13,6 +14,7 @@ class Interval(object):
 
         History
         -------
+        2021-05-19 (AA):  Allow dt.date in __contains__()
         2021-04-17 (AA):  Allow int for `start` and `end`
         2021-04-17 (AA):  Add overlap_length()
     """
@@ -146,14 +148,21 @@ class Interval(object):
 
     def __contains__(self, other):
         """Return a bool or a list of such."""
+
+        # select comparator
         if isinstance(other, Interval):
             return self._contains_interval(other)
         if isinstance(other, dt.datetime):
+            return self._contains_datetime(other)
+        if isinstance(other, dt.date):
+            # date -> datetime
+            other = dt.datetime.combine(other, dt.time())
             return self._contains_datetime(other)
         if isinstance(other, DaytimePeriod):
             return self._contains_daytime_period(other)
         if isinstance(other, Season):
             return self._contains_season(other)
+
         raise TypeError('Cannot compare to %s' % type(other))
 
     def center(self):
