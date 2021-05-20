@@ -222,7 +222,7 @@ def human_format_time(seconds):
 
     return fmt % value + units
 
-def percentage_string(fraction, sep=' '):
+def percentage_string(fraction, sep=' ', sign=False):
     """Return a str with a sensible number of digits.
 
         The closer to 0 or 100%, the more the number of digits is increased.
@@ -233,18 +233,30 @@ def percentage_string(fraction, sep=' '):
             usually, but not necessarily, between 0 and 1
         sep : str
             separator between number and '%' sign in the output
+        sign : bool, optional
+            Preceed positive numbers with '+'. Default: False
 
         Returns
         -------
         str
             something like '0.024 %', '1.2 %', '63 %' or '99.9936 %'
     """
+    if fraction < 0:
+        return '-' + percentage_string(-fraction, sep=sep, sign=False)
+
+    if fraction == 0:
+        return '0%%'
+
+    if fraction == np.inf:
+        return 'infinite'
+
+    if not np.isfinite(fraction):
+        return 'NaN'
+
     pc = fraction * 100
 
-    # outside [0, 100%] : zero digits after .
-    if pc <= 0:
-        Ndig = 0
-    elif pc >= 100:
+    # > 100% : zero digits after .
+    if pc >= 100:
         Ndig = 0
 
     # regular cases
@@ -258,7 +270,14 @@ def percentage_string(fraction, sep=' '):
     Ndig = min(6, int(Ndig))
 
     fmt = '%1.' + str(Ndig) + 'f' + sep + '%%'
-    return (fmt % pc)
+    text = (fmt % pc)
+
+    # sign
+    if sign:
+        text = '+' + text
+
+    return text
+
 
 def ordinal_str(number):
     """Return '2nd'/'14th'/'0th', etc."""
