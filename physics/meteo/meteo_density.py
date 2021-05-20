@@ -53,6 +53,11 @@ def si_to_dobson_unit(value, substance):
     N_molec = value / m             # (m-2) molecules per surface area
     return N_molec / _dobson_unit
 
+def dobson_unit_to_si(value, substance):
+    """Convert from Dobson unit to kg m-2."""
+    m = molecular_mass(substance)
+    return value * m * _dobson_unit
+
 def dobson_unit_factor(substance):
     """Return ratio of DU/SI numeric values."""
     m = molecular_mass(substance)
