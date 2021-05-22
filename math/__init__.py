@@ -4,6 +4,7 @@ from . import factorize
 from . import functions
 from . import largest_remainder
 from . import linreg
+from . import monotonic
 from . import nearest_neighbour
 from . import primes
 from . import range
