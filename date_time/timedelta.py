@@ -1,8 +1,12 @@
 # standard modules
 """timedelta classes."""
+
+# standard
 import calendar
 import datetime as dt
+import warnings
 
+# PyPI
 import numpy as np
 
 class MonthTimeDelta():
@@ -10,6 +14,17 @@ class MonthTimeDelta():
         assert isinstance(number, int)
         self.number = number
         self.days = 0
+
+    def __repr__(self):
+        """Return a str."""
+        return 'MonthTimeDelta of %s months' % str(self.number)
+
+    def __str__(self):
+        """Return a str."""
+        number = self.number
+        if abs(number) == 1:
+            return '%s month' % str(number)
+        return '%s months' % str(number)
 
     def __add__(self, other):
         if not isinstance(other, dt.date):
@@ -52,7 +67,7 @@ class MonthTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -80,7 +95,7 @@ class MonthTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -108,7 +123,7 @@ class MonthTimeDelta():
             if self.max_days() < other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -136,7 +151,7 @@ class MonthTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -164,7 +179,7 @@ class MonthTimeDelta():
             if self.max_days() < other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -191,6 +206,17 @@ class YearTimeDelta():
         assert isinstance(number, int)
         self.number = number
         self.days = 0
+
+    def __repr__(self):
+        """Return a str."""
+        return 'YearTimeDelta of %s years' % str(self.number)
+
+    def __str__(self):
+        """Return a str."""
+        number = self.number
+        if abs(number) == 1:
+            return '%s year' % str(number)
+        return '%s years' % str(number)
 
     def __add__(self, other):
         if not isinstance(other, dt.date):
@@ -229,7 +255,7 @@ class YearTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -253,7 +279,7 @@ class YearTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -277,7 +303,7 @@ class YearTimeDelta():
             if self.max_days() < other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -301,7 +327,7 @@ class YearTimeDelta():
             if self.min_days() > other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -325,7 +351,7 @@ class YearTimeDelta():
             if self.max_days() < other_days:
                 return False
             raise ValueError(
-                    'Comparison between %s and %s is amiguous.' 
+                    'Comparison between %s and %s is amiguous.'
                     % (str(self), str(other))
                     )
 
@@ -363,12 +389,12 @@ class EnhancedTimeDelta(object):
 ###################################################
 def next_month(year, month):
     """Return (year, month) of the following month.
-    
+
         Parameters
         ----------
         year : int
         month : int
-        
+
         Returns
         -------
         year_next : int
@@ -383,12 +409,12 @@ def next_month(year, month):
 
 def previous_month(year, month):
     """Return (year, month) of the previous month.
-    
+
         Parameters
         ----------
         year : int
         month : int
-        
+
         Returns
         -------
         year_prev : int
@@ -403,13 +429,13 @@ def previous_month(year, month):
 
 def next_day(year, month, day):
     """Return (year, month, day) of the following day.
-    
+
         Parameters
         ----------
         year : int
         month : int
         day : int
-        
+
         Returns
         -------
         year_next : int
@@ -425,7 +451,7 @@ def next_day(year, month, day):
 
 def add_months(time, number=1):
     """Increase by number of months.
-        
+
         Parameters
         ----------
         time : datetime.date
@@ -463,7 +489,7 @@ def add_months(time, number=1):
         whatis = 'Invalid date: %04i-%02i-%02i.' % (year, month, day)
         day = days_in_month
         willdo = 'Setting to:   %04i-%02i-%02i.' % (year, month, day)
-        message = ' '.join(whatis, willdo)
+        message = ' '.join([whatis, willdo])
         warnings.warn(message)
 
     return time.replace(year=year, month=month, day=day)
@@ -481,7 +507,7 @@ def add_years(time, number=1):
     if calendar.isleap(year) and month == 2 and day == 29:
         whatis = '29th Feb in non-leap year %i.' % year
         willdo = 'Setting to 28th Feb.'
-        message = ' '.join(whatis, willdo)
+        message = ' '.join([whatis, willdo])
         warnings.warn(message)
 
         day = 28
