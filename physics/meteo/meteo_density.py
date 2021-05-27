@@ -4,11 +4,11 @@ import numpy as np
 # constants
 _avogadro_constant = 6.02214076e23  # mol-1
 _boltzmann_constant = 1.380649e-23  # (J K-1)
-_dobson_unit = 2.2687e20            # m-2
 
 # defaults
-_pressure = 1013.25e2   # N m-2
-_temperature = 288.15   # K
+_pressure = 1013.25e2    # N m-2
+_temperature = 288.15    # K
+_dobson_unit = 2.687e20  # m-2
 
 def ppb_to_ug(ppb, substance, p=None, T=None):
     M = molecular_mass(substance)
@@ -74,7 +74,9 @@ def molecular_mass(substance):
     name_short = get_chemical_formula(substance).lower()
     masses_mol = {
             'co'  : 28.010e-3,
+            'no' : 30.006e-3,
             'no2' : 46.006e-3,
+            'o3'  : 47.997e-3,
             'no3' : 62.004e-3,
             'so2' : 64.066e-3,
             'so4' : 96.06e-3,
@@ -91,7 +93,10 @@ def molecular_mass(substance):
 def get_chemical_formula(substance):
     aliases = {
             'carbonmonoxide' : 'CO',
+            'nitricoxide' : 'NO',
+            'nitric oxide' : 'NO',
             'nitrogendioxide' : 'NO2',
+            'ozone' : 'O3',
             'sulfurdioxide' : 'SO2',
             }
     substance_lower = substance.lower()
