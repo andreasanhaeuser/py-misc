@@ -25,7 +25,7 @@ class FileLock(object):
     """A file lock for use in a `with` context."""
     def __init__(self, file_name, timeout=86400):
         """Prepare the file locker."""
-        self.file_name = file_name
+        self.file_name = os.path.expanduser(file_name)
         self.timeout = timeout
         self.lockfile = self._get_lock_file_name()
         self._clean_if_timeout()
