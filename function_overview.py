@@ -310,7 +310,7 @@ def print_text(text):
         if any(lines[n]):
             newtext += (lines[n] + '\n')
     
-    print newtext
+    print(newtext)
     return newtext
 
 
