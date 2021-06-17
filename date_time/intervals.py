@@ -251,6 +251,37 @@ class Interval(object):
             return True
         return False
 
+    def is_one_calendar_month(self):
+        """Return True if its exactly one calendar month, False otherwise."""
+        start = self.start
+        end = self.end
+
+        if not self.is_calendar_months():
+            return False
+
+        if start.year == end.year and start.month + 1 == end.month:
+            return True
+
+        if start.year+1 == end.year and start.month == 12 and end.month == 1:
+            return True
+
+        return False
+
+    def is_calendar_months(self):
+        """Return True if its exactly calendar months, False otherwise."""
+        start = self.start
+        end = self.end
+
+        # Is `start` exactly at the beginning of a month?
+        if start != dt.datetime(start.year, start.month, 1):
+            return False
+
+        # Is `end` exactly at the beginning of a month?
+        if end != dt.datetime(end.year, end.month, 1):
+            return False
+
+        return True
+
     ############################################################
     # Interval-returning methods                               #
     ############################################################
@@ -920,6 +951,42 @@ class Season(object):
 
     def __str__(self):
         """Return a str."""
+        return self.nice_string()
+
+    def nice_string(self, month_fmt='%B'):
+        """Return a nice human-readable string if possible."""
+        start = self.start
+        end = self.end
+        
+        # empty
+        # ==================================================
+        if start == end:
+            return 'empty season'
+        # ==================================================
+
+        # full year
+        # ==================================================
+        if start.replace(year=end.year) == end:
+            return 'full year'
+        # ==================================================
+
+        # one full month
+        # ==================================================
+        if self.is_one_calendar_month():
+            return self.start.strftime('%B')
+        # ==================================================
+
+        # several full months
+        # ==================================================
+        if self.is_calendar_months():
+            end_mod = end - dt.timedelta(1)
+            start_str = start.strftime(month_fmt)
+            end_str = end_mod.strftime(month_fmt)
+            return start_str + ' - ' + end_str
+        # ==================================================
+
+        # Default
+        # ==================================================
         s = self.start.replace(year=1900)
         e = self.end.replace(year=1900)
 
@@ -934,15 +1001,8 @@ class Season(object):
         fmt = fmt + add
         beg_str = s.strftime(fmt)
         end_str = e.strftime(fmt)
-
-        if s != e:
-            text = '[%s, %s)' % (beg_str, end_str)
-        elif self.start == self.end:
-            text = '(empty)'
-        else:
-            text = '(full year)'
-
-        return text
+        return '[%s, %s)' % (beg_str, end_str)
+        # ==================================================
 
     def __eq__(self, other):
         """return a bool."""
@@ -989,6 +1049,19 @@ class Season(object):
     def length(self):
         """Return an instance of datetime.timedelta."""
         return self.end - self.start
+
+    ############################################################
+    # special intervals -- check                               #
+    ############################################################
+    def is_one_calendar_month(self):
+        """Return True if its exactly one calendar month, False otherwise."""
+        interval = Interval(self.start, self.end)
+        return interval.is_one_calendar_month()
+
+    def is_calendar_months(self):
+        """Return True if its exactly calendar months, False otherwise."""
+        interval = Interval(self.start, self.end)
+        return interval.is_calendar_months()
 
     ############################################################
     # helpers                                                  #
