@@ -189,6 +189,29 @@ class Interval(object):
         return overlap.length()
 
     ############################################################
+    # length in human readable units                           #
+    ############################################################
+    def total_seconds(self):
+        """Return interval duration in seconds as float."""
+        return self.length().total_seconds()
+
+    def total_minutes(self):
+        """Return interval duration in minutes as float."""
+        return self.total_seconds() / 60.
+
+    def total_hours(self):
+        """Return interval duration in hours as float."""
+        return self.total_minutes() / 60.
+
+    def total_days(self):
+        """Return interval duration in days as float."""
+        return self.total_hours() / 24.
+
+    def total_weeks(self):
+        """Return interval duration in weeks as float."""
+        return self.total_days() / 7.
+
+    ############################################################
     # boolean methods                                          #
     ############################################################
     def contains(self, other):
