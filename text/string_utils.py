@@ -278,7 +278,6 @@ def percentage_string(fraction, sep=' ', sign=False):
 
     return text
 
-
 def ordinal_str(number):
     """Return '2nd'/'14th'/'0th', etc."""
     assert isinstance(number, int)
@@ -297,7 +296,9 @@ def ordinal_str(number):
         suffix = 'th'
     return s + suffix
 
-def group_thousands(number, decimals=0, round_digits=False, sep=','):
+def group_thousands(
+        number, decimals=0, round_digits=False, sep=',', round_method='round',
+        ):
     """Return a str, where exponentials of 1000 are grouped.
 
         Parameters
@@ -310,6 +311,8 @@ def group_thousands(number, decimals=0, round_digits=False, sep=','):
             Default: False. Number of significant (leading) digits to round.
         sep : str, optional
             Default: ','. Thousands separator
+        round_method : str, optional
+            passed as `method` to `round_digits()`
 
         Returns
         -------
@@ -366,7 +369,9 @@ def group_thousands(number, decimals=0, round_digits=False, sep=','):
     # Round
     # =====================================================
     if round_digits:
-        number = round_utils.round_digits(number, round_digits)
+        number = round_utils.round_digits(
+                number, round_digits, method=round_method,
+                )
     # =====================================================
 
     # Integer part

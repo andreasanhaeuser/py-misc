@@ -12,13 +12,46 @@ def round_digits(x, digits=1, method='round'):
         x : float
         digits : int, optional
             (default: 1) number of significant digits
-        method : {'round', 'floor', 'ceil'}, optional
+        method : {'round', 'floor', 'ceil', 'probabilistic'}, optional
             (default: 'round')
+            'probabilistic': 1.2 has a 80% chance to be rounded to 1 and a 20%
+            chance to be rounded to 2.
 
         Returns
         -------
         float
     """
+    ############################################################
+    # probabilistic                                            #
+    ############################################################
+    if method in ('prob', 'probabilistic'):
+        low = round_digits(x, digits, 'floor')
+        high = round_digits(x, digits, 'ceil')
+
+        # special case: no rounding
+        if low == high:
+            return low
+
+        # compute probability for rounding down
+        # ------------------------------------------
+        # distances (linear)
+        dlow = np.abs(x - low)
+        dhigh = np.abs(high - x)
+        dtot = dlow + dhigh
+
+        # probability
+        plow = dhigh / dtot
+        # ------------------------------------------
+
+        # randomize
+        rand = np.random.rand()
+        if rand <= plow:
+            return low
+        return high
+
+    ############################################################
+    # non-probabilistic                                        #
+    ############################################################
     if digits <= 0:
         raise ValueError('`digits` must be a positive integer.')
 
@@ -54,3 +87,5 @@ def round_digits(x, digits=1, method='round'):
 
     if method == 'ceil':
         return rounded + correction
+
+    raise NotImplementedError('Method not implemented: %s' % method)
