@@ -1,6 +1,8 @@
+from time import sleep
+
 def call(
         f, *args, n=3, ignore_error=True, error_return_value=None,
-        report_error=True, reporter=print, **kwargs
+        report_error=True, reporter=print, sleep_time=0, **kwargs
         ):
     """Try to call function for n times.
 
@@ -63,6 +65,7 @@ def call(
                     reporter('ERROR: %s' % exception)
                 if not ignore_error:
                     raise exception
+        sleep(sleep_time)
 
     if success:
         return result
