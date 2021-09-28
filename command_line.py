@@ -92,6 +92,11 @@ def get_setup(parser, *args, convert_to_number=True, **kwargs):
 
     return setup
 
+def quick_parse(setup_file=None, convert_to_number=True, **kwargs):
+    """Combine init_parser() and get_setup(). Return a dict."""
+    parser = init_parser(setup_file)
+    return get_setup(parser, convert_to_number=convert_to_number, **kwargs)
+
 ################################################################
 # helpers                                                      #
 ################################################################
@@ -122,7 +127,7 @@ def supersede_setup(
     # ArgumentParser -> Namespace
     # ------------------------------------------------
     if isinstance(setup_cl, argparse.ArgumentParser):
-        setup_cl = parser.parse_args()
+        setup_cl = setup_cl.parse_args()
     # ------------------------------------------------
 
     # Namespace -> dict
