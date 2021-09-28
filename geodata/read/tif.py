@@ -172,6 +172,9 @@ def load_file_raw(filename, bounds, layer=0):
     if not os.path.isfile(filename):
         raise OSError('File does not exist: %s' % filename)
 
+    # convert bounds =====================================
+    bounds = convert_bounds_to_gdf(bounds)
+
     # load data ===========================================
     with rio.open(filename, 'r') as fid:
         crs_file = fid.crs
