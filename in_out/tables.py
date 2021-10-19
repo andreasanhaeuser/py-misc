@@ -781,6 +781,7 @@ def read_column_list(
     ###################################################
     # INPUT CHECK                                     #
     ###################################################
+    filename = os.path.expanduser(filename)
     if not os.path.isfile(filename):
         raise OSError('Not a file: %s' % filename)
 
