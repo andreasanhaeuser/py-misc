@@ -7,7 +7,11 @@ import unittest
 
 # modules to be tested
 import misc.date_time.utils as du
-from misc.date_time.utils import Interval, DaytimePeriod, Season
+# from misc.date_time.utils import Interval, DaytimePeriod, Season
+
+Interval = du.Interval
+DaytimePeriod = du.DaytimePeriod
+Season = du.Season
 
 class Comparisons(unittest.TestCase):
     def setUp(self):

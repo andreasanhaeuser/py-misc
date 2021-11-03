@@ -19,8 +19,11 @@ import numpy as np
 
 # internal modules
 from . import timedelta
-from .intervals import Interval, DaytimePeriod, Season
+# from .intervals import Interval, DaytimePeriod, Season
 from .timedelta import MonthTimeDelta, YearTimeDelta
+from .intervals.interval import Interval
+from .intervals.daytime_period import DaytimePeriod
+from .intervals.season import Season
 
 ###################################################
 # range                                           #
@@ -1019,6 +1022,8 @@ def str_to_timedelta(words, enhanced=False):
             'hour' : 'hours',
             'd' : 'days',
             'day' : 'days',
+            'w' : 'weeks',
+            'week' : 'weeks',
             'mon' : 'months',
             'month' : 'months',
             'a' : 'years',
@@ -1029,6 +1034,10 @@ def str_to_timedelta(words, enhanced=False):
 
     if unit in aliases:
         unit = aliases[unit]
+
+    if unit == 'weeks':
+        unit = 'days'
+        number *= 7
 
     if enhanced and unit == 'months':
         return MonthTimeDelta(number)
