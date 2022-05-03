@@ -291,7 +291,7 @@ class Chronometer(object):
         return self
 
     def use_object_print(self):
-        builtin.print = self.print
+        builtin.print = self.report_info
         return self
 
     def print(self, text, *args, **kwargs):
@@ -443,6 +443,9 @@ class Chronometer(object):
     ############################################################
     # reporters                                                #
     ############################################################
+    def report(self, *args, **kwargs):
+        return self.report_info(*args, **kwargs)
+
     def report_debug(self, *args, **kwargs):
         if self.verbose > 10:
             return self
@@ -626,8 +629,15 @@ class Chronometer(object):
 
     def set_silent(self, silent=True):
         self.silent = silent
+
         if self.silent:
             self.verbose = 100
+        else:
+            self.verbose = 20
+
+    def set_verbose(self, verbose=20):
+        self.silent = False
+        self.verbose = verbose
 
     ###################################################
     # COUNT                                           #
@@ -886,7 +896,11 @@ class Chronometer(object):
             pass
         else:
             with open(self.file, 'r') as fid:
-                lines = fid.readlines()
+                try:
+                    lines = fid.readlines()
+                except Exception as exception:
+                    _builtin_print(self.file)
+                    raise exception
             with open(self.file, 'w') as fid:
                 for line in lines[:-N]:
                     fid.write(line)

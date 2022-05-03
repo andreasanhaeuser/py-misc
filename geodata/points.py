@@ -61,5 +61,3 @@ def convert_to_tuple(point):
 
     assert len(point) == 2
     return tuple(point)
-
-

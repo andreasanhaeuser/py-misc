@@ -404,8 +404,12 @@ def get_xyz(data, meta, height_factor):
 
     return x, y, z
 
-
 if __name__ == '__main__':
+    lon = 37.3675005
+    lat = 38.1717211
+
+
+if False and __name__ == '__main__':
     import matplotlib.pyplot as plt
     import tif
     def plot(data, meta, nsub, cmap, sun, vmin=None, vmax=None):

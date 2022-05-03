@@ -3,7 +3,7 @@
 
 # standard modules
 import unittest
-from collections import Iterable
+from collections.abc import Iterable
 
 # PyPI modules
 import numpy as np
@@ -16,7 +16,7 @@ class NameList(unittest.TestCase):
         pass
 
     def test_recursive(self):
-        filename = 'test_files/namelist_child.txt'
+        filename = 'test_files/namelist.txt'
         result = tab.read_namelist(filename, convert_to_number=True)
         expected = {
                 'parameter_a' : 'default_by_parent_1_a',
@@ -25,7 +25,7 @@ class NameList(unittest.TestCase):
                 'parameter_d' : 'default_by_parent_2_d',
                 'parameter_e' : ['default_by_parent_2', 'e'],
                 'parameter_f' : 'default_by_parent_2_f',
-                'parameter_g' : [4, 3], 
+                'parameter_g' : 'default_by_grand_parent_g', 
                 'parameter_h' : 'a string', 
                 'parameter_i' : ['two', 'strings'], 
                 'parameter_j' : 1000, 
@@ -49,7 +49,14 @@ class NameList(unittest.TestCase):
             value = expected[key]
             if not isinstance(value, str) and isinstance(value, Iterable):
                 for n, val in enumerate(value):
-                    self.assertEqual(value[n], result[key][n])
+                    if val == result[key][n]:
+                        continue
+                    print(
+                            '"%s" should be "%s", got "%s"' %
+                            (key, val, result[key][n])
+                            )
+                    self.assertEqual(val, result[key][n])
+
             self.assertEqual(value, result[key])
 
         print('Loaded_files:')

@@ -78,8 +78,8 @@ def gdf_to_grid(
         N = len(source_values)
         weighted_sum = np.zeros_like(target_x)
         weights = np.zeros_like(target_x)
-        zmin = np.nanmax(source_values) / 1000.
-        dist_fwhm2 = dist_fwhm**2
+        # zmin = np.nanmax(source_values) / 1000.
+        # dist_fwhm2 = dist_fwhm**2
         maxdist2 = max_dist**2
         for n in range(N):
             z = source_values[n]
@@ -108,7 +108,8 @@ def gdf_to_grid(
 
 
             weight = 1/dist2
-            weight = np.exp(- dist2/dist_fwhm2)
+            # weight = 1/dist2**2
+            # weight = np.exp(- dist2/dist_fwhm2)
             # weight[np.isnan(weight)] = 0.
             # weight[dist2>maxdist2] = 0.
 

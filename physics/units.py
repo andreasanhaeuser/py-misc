@@ -7,6 +7,7 @@ def convert_from_si(value, units):
     return value / factor
 
 def get_scale_factor(units):
+    """Return a float."""
     known_units = {
             # distance
             'nm' : 1e-9,
@@ -37,8 +38,51 @@ def get_scale_factor(units):
             'd' : 86400,
 
             # concentration
+            '[\\mug/m^3]' : 1e-9,
             'ug m-3' : 1e-9,
             'kg m-3' : 1.,
+            }
+
+    if units in known_units:
+        return known_units[units]
+
+    raise ValueError('Unknown units: %s' % units)
+
+def si_units(units):
+    """Return a str."""
+    known_units = {
+            # distance
+            'nm' : 'm',
+            'um' : 'm',
+            'mm' : 'm',
+            'm' : 'm',
+            'km' : 'm',
+
+            # mass
+            'ug' : 'kg',
+            'mg' : 'kg',
+            'g' : 'kg',
+            'kg' : 'kg',
+            't' : 'kg',
+            'kt' : 'kg',
+            'Mt' : 'kg',
+            'Gt' : 'kg',
+
+            # time
+            'fs' : 's',
+            'ps' : 's',
+            'ns' : 's',
+            'us' : 's',
+            'ms' : 's',
+            's' : 's',
+            'min' : 's',
+            'h' : 's',
+            'd' : 's',
+
+            # concentration
+            '[\\mug/m^3]' : 'kg m-3',
+            'ug m-3' : 'kg m-3',
+            'kg m-3' : 'kg m-3',
             }
 
     if units in known_units:

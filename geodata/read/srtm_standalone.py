@@ -461,4 +461,3 @@ if __name__ == '__main__':
         plot(ill, ill_meta, nplot, cmap, sun)
     plt.tight_layout()
     plt.show()
-

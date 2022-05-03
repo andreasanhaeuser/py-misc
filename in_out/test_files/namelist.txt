@@ -1,0 +1,3 @@
+load_file : namelist_child.txt
+load_file : namelist_parent_1.txt
+load_file : namelist_parent_2.txt

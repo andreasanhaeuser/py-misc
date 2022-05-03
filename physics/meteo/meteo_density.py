@@ -11,11 +11,18 @@ _temperature = 288.15    # K
 _dobson_unit = 2.687e20  # m-2
 
 def ppb_to_ug(ppb, substance, p=None, T=None):
+    """Convert ppb to ug/m3."""
     M = molecular_mass(substance)
     v = ppb * 1e-9
     mass_si = volume_to_mass_density(v, M, p, T)
     mass_ug = mass_si * 1e9
     return mass_ug
+
+def ug_to_ppb(mass_ug, substance, p=None, T=None):
+    """Convert ug/m3 to ppb."""
+    factor = ppb_factor_ug(substance, p, T)
+    ppb = mass_ug * factor
+    return ppb
 
 def volume_to_mass_density(v, M, p=None, T=None):
     """
@@ -63,7 +70,13 @@ def dobson_unit_factor(substance):
     m = molecular_mass(substance)
     return 1 / (m * _dobson_unit)
 
+def ppb_factor_ug(substance, p=None, T=None):
+    factor_si = ppb_factor(substance, p, T)
+    factor_ug = factor_si * 1e-9
+    return factor_ug
+
 def ppb_factor(substance, p=None, T=None):
+    """Factor for ppb = mass_si * ppb_factor."""
     M = molecular_mass(substance)
     mass_to_volume = 1. / volume_to_mass_density(1, M, p, T)
     mass_to_ppb = 1e9 * mass_to_volume

@@ -198,14 +198,13 @@ def text_for_file(script, filename, prefix, last=False):
 
     return text
 
-def text_for_directory(path, prefix='', last=False):
+def text_for_directory(path, prefix='', filename=None, last=False):
     """Return a str."""
     if path[-1] == '/':
         path = path[:-1]
 
     scripts = scripts_in_dir(path)
     dirs = dirs_in_dir(path)
-    
 
     ###################################################
     # DIRECTORY LINE                                  #
@@ -232,8 +231,12 @@ def text_for_directory(path, prefix='', last=False):
 
         name, header = script
 
-        filename = path + '/' + name
-        lines = text_for_file(script, filename, sprefix, last=last)
+        filepath = path + '/' + name
+        if filename is not None:
+            if os.path.abspath(filepath) != os.path.abspath(filename):
+                continue
+        
+        lines = text_for_file(script, filepath, sprefix, last=last)
 
         text += lines
 
@@ -252,7 +255,9 @@ def text_for_directory(path, prefix='', last=False):
         n += 1
         last = n == N
         subdir = path + '/' + name
-        lines = text_for_directory(path=subdir, prefix=dprefix, last=last)
+        lines = text_for_directory(
+                path=subdir, prefix=dprefix, filename=filename, last=last,
+                )
         text += lines
 
         if not last:
@@ -316,46 +321,32 @@ def print_text(text):
 
 if __name__ == '__main__':
     args = sys.argv[1:]
+    base = '.'
+    filename = None
+
     if len(args) > 0:
-        base = args[0]
-    else:
-        base = '.'
+        if os.path.isdir(args[0]):
+            base = args[0]
+        elif os.path.isfile(args[0]):
+            filename = args[0]
+        else:
+            raise OSError('Cannot find %s' % base[0])
 
     if len(args) > 1:
         out = args[1]
     else:
         out = None
     
-
     if not os.path.isdir(base):
         print('Could not access directory: ' + base)
+        sys.exit(1)
 
+    text = text_for_directory(base, filename=filename, last=True)
+    if not out:
+        print_text(text)
     else:
-        text = text_for_directory(base, last=True)
-        if not out:
-            print_text(text)
-        else:
-            if os.path.isfile(out):
-                os.remove(out)
-            f = open(out, 'w')
-            f.write(text)
-            f.close()
-
-
-
-
-
-
-
-
-
-
-    
-    
-
-
-
-
-
-
-
+        if os.path.isfile(out):
+            os.remove(out)
+        f = open(out, 'w')
+        f.write(text)
+        f.close()

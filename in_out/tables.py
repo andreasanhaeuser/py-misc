@@ -471,6 +471,7 @@ def get_namelist(
 #                    namelist[key] = sub_namelist[key]
 #                del sub_namelist
 #            continue
+                
 
         ###################################################
         # FLOAT CONVERSION                                #
@@ -488,6 +489,23 @@ def get_namelist(
         if strip_string_delimiters:
             if isinstance(data, str):
                 data = strip_delimiters(data, str_delims)
+
+        ########################################################
+        # load_file                                            #
+        ########################################################
+        # If there are multiple appearances of 'load_file' or 'load_files',
+        # then append the new appearances to the existing ones.
+        if name in ('load_file', 'load_files'):
+            if name not in namelist:
+                pass
+            else:
+                values = namelist[name]
+                if isinstance(values, str):
+                    values = [values]
+                if isinstance(data, str):
+                    data = [data]
+                namelist[name] = values + data
+                continue
 
         ###################################################
         # WRITE TO DICT                                   #
@@ -606,12 +624,12 @@ def column_list(
     assert isinstance(data, Iterable)
     assert len(data) == J
     init = False
-    for x in data:
+    for ncol, x in enumerate(data):
         assert isinstance(x, Iterable)
         if not init:
             N = len(x)
             init = True
-        assert len(x) == N
+        assert len(x) == N, print(headers[ncol])
 
     # length J variables
     typ = expand(typ, J)
@@ -691,9 +709,14 @@ def column_list(
         for j in range(J):
             # cast to string
             value = data[j][n]
-            if typ[j] == 'i':
-                value = int(value)
-            word = fmts[j].format(value)
+
+            try:
+                if typ[j] == 'i':
+                    value = int(value)
+                word = fmts[j].format(value)
+
+            except ValueError:
+                word = str(value)
 
             # add separator
             if j < J - 1:
@@ -706,8 +729,10 @@ def column_list(
                 word = word.center(cw[j])
             elif align[j] == 'r':
                 word = word.rjust(cw[j])
-
+            
+            assert line.count(sep) <= j+1
             line = line + word
+
         text = text + line.rstrip()
 
     ###################################################

@@ -90,6 +90,9 @@ def get_setup(parser, *args, convert_to_number=True, **kwargs):
     # supersede with command-line arguments
     setup = supersede_setup(setup_base, setup_cl)
 
+    # convert 'none' -> None
+    setup = convert_nones(setup)
+
     return setup
 
 def quick_parse(setup_file=None, convert_to_number=True, **kwargs):
@@ -154,4 +157,11 @@ def supersede_setup(
 
         setup[key] = value
 
+    return setup
+
+def convert_nones(setup):
+    for key in setup:
+        value = setup[key]
+        if value == 'none':
+            setup[key] = None
     return setup

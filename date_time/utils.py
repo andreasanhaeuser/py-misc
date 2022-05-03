@@ -12,7 +12,7 @@
 # standard modules
 import calendar
 import datetime as dt
-from collections import Iterable
+from collections.abc import Iterable
 
 # PyPI modules
 import numpy as np
@@ -355,6 +355,13 @@ def dates_in_year(year, inc=None, season=None):
     return date_range(beg, end, inc=inc, season_of_year=season)
 
 
+################################################################
+# UTC                                                          #
+################################################################
+def utctoday():
+    """Return dt.date.today(), but in UTC."""
+    return dt.datetime.utcnow().date()
+
 ###################################################
 # unixtime (seconds since ...)                    #
 ###################################################
@@ -403,15 +410,15 @@ def datetime_to_seconds(d, reference_date=dt.datetime(1970, 1, 1)):
     if isinstance(d, Iterable):
         if len(d) == 0:
             return []
-        else:
-            s = [datetime_to_seconds(dd, reference_date=ref) for dd in d]
-            return np.array(s)
+
+        s = [datetime_to_seconds(dd, reference_date=ref) for dd in d]
+        return np.array(s)
 
     if d is None:
         return np.nan
-    else:
-        distance = d - ref                 # (this is an instance of timedelta)
-        return distance.total_seconds()
+
+    distance = d - ref                 # (this is an instance of timedelta)
+    return distance.total_seconds()
 
 def seconds_to_datetime(seconds, reference_date=dt.datetime(1970, 1, 1)):
     """Convert seconds since reference date to dt.datetime.
@@ -454,8 +461,8 @@ def seconds_to_datetime(seconds, reference_date=dt.datetime(1970, 1, 1)):
 
     if np.isnan(seconds):
         return None
-    else:
-        return ref + dt.timedelta(seconds=float(seconds))
+
+    return ref + dt.timedelta(seconds=float(seconds))
 
 
 ###################################################
@@ -877,7 +884,7 @@ def name_of_weekday(weekday, Nchar=None):
 
     return name
 
-def str_to_datetime(s, fmt=None):
+def as_datetime(x, fmt=None):
     """Return a dt.datetime.
 
         If input is insufficient, the function tries to guess smartly to
@@ -894,17 +901,149 @@ def str_to_datetime(s, fmt=None):
         Returns
         -------
         datetime.datetime or list of such
+
+
+        History
+        -------
+        2022-01-17 (AA): Change None to return utcnow, instead of now.
     """
-    if s is None:
-        return dt.datetime.now()
+    if x is None:
+        return dt.datetime.utcnow()
+
 
     # check type
-    if isinstance(s, str):
-        pass
-    elif isinstance(s, Iterable):
-        return [str_to_datetime(ss, fmt) for ss in s]
-    else:
-        raise TypeError('Cannot convert type %s' % type(s))
+    # =========================================================
+    # datetime
+    if isinstance(x, dt.datetime):
+        return x
+
+    # str
+    if isinstance(x, str):
+        return str_to_datetime(x, fmt)
+
+    # Iterable
+    if isinstance(x, Iterable):
+        return [as_datetime(element, fmt) for element in x]
+    # =========================================================
+
+    # Type not implemented
+    message = 'Input must be str or iterable of such, got %s' % type(x)
+    raise TypeError(message)
+
+def as_date(x, fmt=None):
+    """Return a dt.datetime.
+
+        If input is insufficient, the function tries to guess smartly to
+        extend.
+
+        It understands 'now' and 'today'.
+
+        Parameters
+        ----------
+        s : str or iterable of such or None
+            if None, return today
+        fmt : str or None
+            The formatter
+
+        Returns
+        -------
+        datetime.date or list of such
+
+        History
+        -------
+        2022-01-17 (AA): None->utctoday
+    """
+    if x is None:
+        return utctoday()
+
+    # check type
+    # =========================================================
+    # datetime
+    if isinstance(x, dt.datetime):
+        return x.date()
+
+    # date
+    if isinstance(x, dt.date):
+        return x
+
+    # str
+    if isinstance(x, str):
+        datetime = str_to_datetime(s, fmt)
+        return datetime.date()
+
+    # Iterable
+    if not isinstance(x, Iterable):
+        return [as_date(element, fmt) for element in x]
+    # =========================================================
+
+    # Type not implemented
+    message = 'Input must be str or iterable of such, got %s' % type(x)
+    raise TypeError(message)
+
+def as_timedelta(x, enhanced=False):
+    """Alias to str_to_timedelta."""
+    if isinstance(x, dt.timedelta):
+        return x
+
+    return str_to_timedelta(x, enhanced=enhanced)
+
+def timedelta_to_str(timedelta):
+    """Convert a timedelta to number, unit and return as str, str.
+
+        This function is aimes to be fully inverse to `str_to_timedelta`
+
+        Parameters
+        ----------
+        timedelta : dt.timedelta or MonthTimeDelta or YearTimeDelta
+
+        Returns
+        -------
+        number : str
+        unit : str
+    """
+    if isinstance(timedelta, MonthTimeDelta):
+        num = str(timedelta.number)
+        unit = 'month'
+        return num, unit
+
+    if isinstance(timedelta, YearTimeDelta):
+        num = str(timedelta.number)
+        unit = 'a'
+        return num, unit
+
+    if not isinstance(timedelta, dt.timedelta):
+        raise NotImplementedError(type(timedelta))
+
+    seconds = timedelta.total_seconds()
+    if seconds % 1 != 0:
+        raise NotImplementedError('Fractions of seconds not implemented.')
+
+    if seconds == 0:
+        return 0, 's'
+
+    units_and_factors = (
+            ('s', 1),
+            ('min', 60),
+            ('h', 3600),
+            ('d', 86400),
+            )
+
+    int_unit, int_factor = units_and_factors[0]
+
+    for unit, factor in units_and_factors:
+        if seconds % factor != 0:
+            break
+        int_unit = unit
+        int_factor = factor
+
+    int_number = int(seconds / int_factor)
+
+    return str(int_number), int_unit
+
+def str_to_datetime(s, fmt=None):
+    if not isinstance(s, str):
+        message = 'Input must be str, got %s' % type(s)
+        raise TypeError(message)
 
     # now
     if s.lower() == 'now':
@@ -955,37 +1094,19 @@ def str_to_datetime(s, fmt=None):
 
     return dt.datetime.strptime(s, fmt)
 
-def str_to_date(s, fmt=None):
-    """Return a dt.datetime.
-
-        If input is insufficient, the function tries to guess smartly to
-        extend.
-
-        It understands 'now' and 'today'.
+def str_to_timedelta(words, enhanced=False):
+    """
 
         Parameters
         ----------
-        s : str or iterable of such
-        fmt : str or None
-            The formatter
+        words : list or tuple of 2 str
+        enhanced: bool
+            allow YearTimeDelta or alike
 
         Returns
         -------
-        datetime.date or list of such
+        dt.timedelta
     """
-    # check input
-    if not isinstance(s, Iterable):
-        message = 'Input must be str or iterable of such, got %s' % type(s)
-        raise TypeError(message)
-
-    # Iterable
-    if not isinstance(s, str):
-        return [str_to_date(ss, fmt) for ss in s]
-
-    datetime = str_to_datetime(s, fmt)
-    return datetime.date()
-
-def str_to_timedelta(words, enhanced=False):
     if isinstance(words, str):
         separators = ('_', '-')
         for separator in separators:
@@ -1046,60 +1167,6 @@ def str_to_timedelta(words, enhanced=False):
         return YearTimeDelta(number)
 
     return dt.timedelta(**{unit : number})
-
-def timedelta_to_str(timedelta):
-    """Convert a timedelta to number, unit and return as str, str.
-
-        This function is aimes to be fully inverse to `str_to_timedelta`
-
-        Parameters
-        ----------
-        timedelta : dt.timedelta or MonthTimeDelta or YearTimeDelta
-
-        Returns
-        -------
-        number : str
-        unit : str
-    """
-    if isinstance(timedelta, MonthTimeDelta):
-        num = str(timedelta.number)
-        unit = 'month'
-        return num, unit
-
-    if isinstance(timedelta, YearTimeDelta):
-        num = str(timedelta.number)
-        unit = 'a'
-        return num, unit
-
-    if not isinstance(timedelta, dt.timedelta):
-        raise NotImplementedError(type(timedelta))
-
-    seconds = timedelta.total_seconds()
-    if seconds % 1 != 0:
-        raise NotImplementedError('Fractions of seconds not implemented.')
-
-    if seconds == 0:
-        return 0, 's'
-
-    units_and_factors = (
-            ('s', 1),
-            ('min', 60),
-            ('h', 3600),
-            ('d', 86400),
-            )
-
-    int_unit, int_factor = units_and_factors[0]
-
-    for unit, factor in units_and_factors:
-        if seconds % factor != 0:
-            break
-        int_unit = unit
-        int_factor = factor
-
-    int_number = int(seconds / int_factor)
-
-    return str(int_number), int_unit
-
 
 ################################################################
 # MISC                                                         #

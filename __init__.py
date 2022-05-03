@@ -7,6 +7,7 @@ from . import grids
 from . import in_out
 from . import math
 from . import physics
+from . import plot
 from . import standards
 from . import text
 

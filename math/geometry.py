@@ -60,9 +60,22 @@ def distance_on_sphere(
         
         History
         -------
+        2021-11-17: (AA) str->float conversion
         2018-12-01: (AA) Extention to arrays of arbitrary shape
         2014-2016 : (AA)
     """
+    ############################################################
+    # cast str -> float                                        #
+    ############################################################
+    if isinstance(longitude_1, str):
+        longitude_1= float(longitude_1)
+    if isinstance(latitude_1, str):
+        latitude_1= float(latitude_1)
+    if isinstance(longitude_2, str):
+        longitude_2= float(longitude_2)
+    if isinstance(latitude_2, str):
+        latitude_2= float(latitude_2)
+
     ###################################
     # INPUT CHECK                     #
     ###################################

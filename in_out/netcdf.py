@@ -57,11 +57,12 @@ def read_file(
 
         History
         -------
+        2022-01-18 (AA): expanduser() on filename
         2020-10-26 (AA): Add global dimension loader
         2019-09-20 (AA): Add per-variable dimension loader
         2018-01-03 (AA): Created
     """
-    fn_long = filename
+    fn_long = os.path.expanduser(filename)
     if not os.path.isfile(fn_long):
         return None, None
 
